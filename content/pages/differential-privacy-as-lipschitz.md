@@ -8,19 +8,6 @@ tags = [
 ]
 +++
 
-## Differential Privacy and Optimal Transport
-
-It has often been said that differential privacy allows allows a user to trade off between _privacy_ on the one hand and _accuracy_ on the other. This has been reflected by several theorems (cite???) giving reasonably tight bounds on the privacy-accuracy tradeoff.
-
-However, the relationship between these two quantities is even tighter than these bounds might suggest. Let $X$ and $Y$ be complete, separable metric spaces with metrics $d_X$ and $d_Y$. Let $\mathcal{P}(X)$ and $\mathcal{P}(Y)$ be the space of Borel probability measures. Given two measures $\mu \in \mathcal{P}(X)$ and $\nu \in \mathcal{P}(Y)$, a _coupling_ of $\mu$ and $\nu$ is simply a probability distribution $\pi \in \mathcal{P}(X \times Y)$ whose marginals $p_\sharp^1 \pi = \mu$ and $p_\sharp^2 \pi = \nu$.
-
-In this post, we will prove the following theorem:
-
-{{< thm >}}
-Multiplicative Kantorovich duality
-{{< /thm >}}
-
-
 
 ## Differential Privacy as a Lipschitz Condition
 
