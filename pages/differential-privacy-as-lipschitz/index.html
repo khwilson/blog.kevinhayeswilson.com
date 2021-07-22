@@ -1,42 +1,374 @@
-<!doctype html><html lang=en-us><head><title>Metric Formulations of Differential Privacy | Kevin's Blog</title><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,minimum-scale=1"><meta name=description content="Constructing differential privacy as a topology on the space of probability measures"><meta name=generator content="Hugo 0.85.0"><meta name=ROBOTS content="NOINDEX, NOFOLLOW"><link rel=stylesheet href=/css/style.css><link rel="shortcut icon" href=/images/favicon.ico type=image/x-icon><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','your-google-analytics-id','auto'),ga('send','pageview'))</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><nav class=navigation><a href=/><span class=arrow>←</span>Home</a>
-<a href=/posts>Archive</a>
-<a href=/tags>Tags</a>
-<a href=/about>About</a>
-<a class=button href=https://blog.kevinhayeswilson.com/index.xml>Subscribe</a></nav><main class=main><section id=single><h1 class=title>Metric Formulations of Differential Privacy</h1><div class=tip><span>Jul 1, 2021 00:00</span>
-<span class=split>·</span>
-<span>3250 words</span>
-<span class=split>·</span>
-<span>16 minute read</span></div><div class=content><h2 id=differential-privacy-as-a-lipschitz-condition>Differential Privacy as a Lipschitz Condition <a href=#differential-privacy-as-a-lipschitz-condition class=anchor>🔗</a></h2><p>Another way to look at differnetial privacy is as a Lipschitz-like condition between two metric spaces. Specifically, take $X$ and $Y$ to be complete, second countable metric spaces we can think of the randomized function $f: X \to Y$ as defining a family of probability measures $\mu_x$ that satisfy the condition that $\mu_x(A) \leq \exp(\varepsilon d(x, x')) \mu_{x'}(A)$ for all $A \subseteq Y$ and $x, x' \in X$.<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup> This condition obviously forces $\mu_x$ to be <a href=https://en.wikipedia.org/wiki/Absolute_continuity#Absolute_continuity_of_measures target=_blank rel=noopener>absolutely continuous</a> with respect to $\mu_{x'}$ (and vice-versa). Then the <a href=https://en.wikipedia.org/wiki/Radon%E2%80%93Nikodym_theorem target=_blank rel=noopener>Radon-Nikodym Theorem</a> tells us that there is a measureable function $\frac{d\mu_x}{d\mu_{x'}} : Y \to \mathbb{R}$ (unique upto a $\mu_{x'}$ null-set) such that $\int_A \frac{d\mu_x}{d\mu_{x'}}(x) d\mu_{x'}(x) = \mu_x(A)$.</p><p>For any function $h : Y \to \mathbb{R}$ and measure $\mu$ on $Y$, let <code>$\| h \|_{\infty, \mu}$</code> be the sup-norm on $h$, i.e., the infimum over all $K \geq 0$ such that $h(y) \leq K$ except potentially on a set of $\mu$-measure $0$. Note that this norm depends only on the null sets of $\mu$, and so <code>$\| h \|_{\infty, \mu} = \| h \|_{\infty, \nu}$</code> whenever $\mu$ and $\nu$ are mutually absolutely continuous.</p><p>With this norm in hand, we can define a (quasi-)metric <code>$d_{DP}$</code> on <code>$\mathcal{P}(Y)$</code> as follows:</p><ul><li>If <code>$\mu, \nu \in \mathcal{P}(Y)$</code> and <code>$\mu \ll \nu \ll \mu$</code>, then define <code>$d_{DP}(\mu, \nu) = \| \ln \frac{d\mu}{d\nu} \|_{\infty, \mu}$</code>. Note that this may be infinite.</li><li>If <code>$\mu, \nu \in \mathcal{P}(Y)$</code> are <em>not</em> mutually absolutely continuous, define <code>$d(\mu, \nu) = \infty$</code>.</li></ul><p>This is a quasi-metric in the sense that <code>$d(\mu, \nu) = 0$</code> if and only if <code>$\mu = \nu$</code>, it is symmetric <code>$d(\mu, \nu) = d(\nu, \mu)$</code>, and satisfies the triangle inequality <code>$d(\mu, \rho) \leq d(\mu, \nu) + d(\nu, \rho)$</code>. When $\mu$ and $\nu$ are mutually absolutely continuous, the first two points follow directly from the fact that they must have the same null sets and the Radon-Nikodym theorem. When they are not mutually absolutely continuous, $d(\mu, \nu) = d(\nu, \mu) = \infty$ by definition, so the first two points are obvious.</p><p>As for the triangle inequality, when <code>$\mu$</code>, <code>$\nu$</code>, and <code>$\rho$</code> are not mutually absolutely continuous, then the triangle inequality is obvious. On the other hand, if <code>$\mu$</code>, <code>$\nu$</code>, and <code>$\rho$</code> are all mutually absolutely continuous, then the Radon-Nikodym theorem tells us that <code>$\frac{d\mu}{d\rho} = \frac{d\mu}{d\nu} \cdot \frac{d\nu}{d\rho}$</code>, and so the triangle inequality for <code>$d_{DP}$</code> follows from the triangle inequality of <code>$\| \cdot \|$</code>.</p><p>Equipping $\mathcal{P}(Y)$ with this metric, we arrive at the following alternative characterization of differential privacy.</p><p class=theorem>The randomized function $f: X \to Y$ is $\varepsilon$-differentially private if and only if the associated map $f : X \to \mathcal{P}(Y)$ is $\varepsilon$-Lipschitz.</p><div class=proof><p>Suppose that the map <code>$f : X \to \mathcal{P}(Y)$</code> is <code>$\varepsilon$</code>-Lipschitz. Then for each <code>$x, x' \in X$</code> we have that <code>$\frac{d\mu}{d\mu_{x'}}(y) \leq \exp(\varepsilon \cdot d(x, x'))$</code> except potentially on a set of <code>$\mu_{x'}$</code>-measure <code>$0$</code>. Then</p><p>$$
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Metric Formulations of Differential Privacy | Kevin&#39;s Blog</title>
+
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">    
+<meta name="viewport" content="width=device-width,minimum-scale=1">
+<meta name="description" content="Constructing differential privacy as a topology on the space of probability measures">
+<meta name="generator" content="Hugo 0.85.0" />
+
+
+  <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+
+<link rel="stylesheet" href="/css/style.css">
+<link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
+
+ 
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'your-google-analytics-id', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+
+
+
+
+
+  </head>
+
+  <body>
+    <nav class="navigation">
+	
+		<a href="/"> <span class="arrow">←</span>Home</a>
+	
+	<a href="/posts">Archive</a>
+	<a href="/tags">Tags</a>
+	<a href="/about">About</a>
+
+	
+
+	
+	  <a class="button" href="https://blog.kevinhayeswilson.com/index.xml">Subscribe</a>
+	
+</nav>
+
+
+    <main class="main">
+      
+
+<section id="single">
+    <h1 class="title">Metric Formulations of Differential Privacy</h1>
+
+    <div class="tip">
+        <span>
+          Jul 1, 2021 00:00
+        </span>
+        <span class="split">
+          ·
+        </span>
+        <span>
+          
+            4279 words
+          
+        </span>
+        <span class="split">
+          ·
+        </span>
+        <span>
+          21 minute read
+        </span>
+    </div>
+
+    <div class="content">
+      <h2 id="differential-privacy-as-a-lipschitz-condition">Differential Privacy as a Lipschitz Condition <a href="#differential-privacy-as-a-lipschitz-condition" class="anchor">🔗</a></h2><p>Another way to look at differnetial privacy is as a Lipschitz-like condition between two metric spaces. Specifically, take $X$ and $Y$ to be complete, second countable metric spaces we can think of the randomized function $f: X \to Y$ as defining a family of probability measures $\mu_x$ that satisfy the condition that $\mu_x(A) \leq \exp(\varepsilon d(x, x')) \mu_{x'}(A)$ for all $A \subseteq Y$ and $x, x' \in X$.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> This condition obviously forces $\mu_x$ to be <a 
+    href="https://en.wikipedia.org/wiki/Absolute_continuity#Absolute_continuity_of_measures"
+    
+    
+     
+      target="_blank" 
+      rel="noopener"
+    
+>
+    absolutely continuous
+</a> with respect to $\mu_{x'}$ (and vice-versa). Then the <a 
+    href="https://en.wikipedia.org/wiki/Radon%E2%80%93Nikodym_theorem"
+    
+    
+     
+      target="_blank" 
+      rel="noopener"
+    
+>
+    Radon-Nikodym Theorem
+</a> tells us that there is a measureable function $\frac{d\mu_x}{d\mu_{x'}} : Y \to \mathbb{R}$ (unique upto a $\mu_{x'}$ null-set) such that $\int_A \frac{d\mu_x}{d\mu_{x'}}(x) d\mu_{x'}(x) = \mu_x(A)$.</p>
+<p>For any function $h : Y \to \mathbb{R}$ and measure $\mu$ on $Y$, let <code>$\| h \|_{\infty, \mu}$</code> be the sup-norm on $h$, i.e., the infimum over all $K \geq 0$ such that $h(y) \leq K$ except potentially on a set of $\mu$-measure $0$. Note that this norm depends only on the null sets of $\mu$, and so <code>$\| h \|_{\infty, \mu} = \| h \|_{\infty, \nu}$</code> whenever $\mu$ and $\nu$ are mutually absolutely continuous.</p>
+<p>With this norm in hand, we can define a (quasi-)metric <code>$d_{DP}$</code> on <code>$\mathcal{P}(Y)$</code> as follows:</p>
+<ul>
+<li>If <code>$\mu, \nu \in \mathcal{P}(Y)$</code> and <code>$\mu \ll \nu \ll \mu$</code>, then define <code>$d_{DP}(\mu, \nu) = \| \ln \frac{d\mu}{d\nu} \|_{\infty, \mu}$</code>. Note that this may be infinite.</li>
+<li>If <code>$\mu, \nu \in \mathcal{P}(Y)$</code> are <em>not</em> mutually absolutely continuous, define <code>$d(\mu, \nu) = \infty$</code>.</li>
+</ul>
+<p>This is a quasi-metric in the sense that <code>$d(\mu, \nu) = 0$</code> if and only if <code>$\mu = \nu$</code>, it is symmetric <code>$d(\mu, \nu) = d(\nu, \mu)$</code>, and satisfies the triangle inequality <code>$d(\mu, \rho) \leq d(\mu, \nu) + d(\nu, \rho)$</code>. When $\mu$ and $\nu$ are mutually absolutely continuous, the first two points follow directly from the fact that they must have the same null sets and the Radon-Nikodym theorem. When they are not mutually absolutely continuous, $d(\mu, \nu) = d(\nu, \mu) = \infty$ by definition, so the first two points are obvious.</p>
+<p>As for the triangle inequality, when <code>$\mu$</code>, <code>$\nu$</code>, and <code>$\rho$</code> are not mutually absolutely continuous, then the triangle inequality is obvious. On the other hand, if <code>$\mu$</code>, <code>$\nu$</code>, and <code>$\rho$</code> are all mutually absolutely continuous, then the Radon-Nikodym theorem tells us that <code>$\frac{d\mu}{d\rho} = \frac{d\mu}{d\nu} \cdot \frac{d\nu}{d\rho}$</code>, and so the triangle inequality for <code>$d_{DP}$</code> follows from the triangle inequality of <code>$\| \cdot \|$</code>.</p>
+<p>Equipping $\mathcal{P}(Y)$ with this metric, we arrive at the following alternative characterization of differential privacy.</p>
+<p class="theorem ">
+    
+The randomized function $f: X \to Y$ is $\varepsilon$-differentially private if and only if the associated map $f : X \to \mathcal{P}(Y)$ is $\varepsilon$-Lipschitz.
+
+</p>
+<div class="proof "><p>Suppose that the map <code>$f : X \to \mathcal{P}(Y)$</code> is <code>$\varepsilon$</code>-Lipschitz. Then for each <code>$x, x' \in X$</code> we have that <code>$\frac{d\mu}{d\mu_{x'}}(y) \leq \exp(\varepsilon \cdot d(x, x'))$</code> except potentially on a set of <code>$\mu_{x'}$</code>-measure <code>$0$</code>. Then</p>
+<p>$$
 \mu_x(A) = \int_A \frac{d\mu}{d\mu_{x'}}(y) d\mu_{x'}(y) \leq \exp(\varepsilon \cdot d(x, x')) \int_A d\mu_{x'}(y) = \exp(\varepsilon \cdot d(x, x')) \mu_{x'}(A).
-$$</p><p>On the other hand, suppose that the map $f : X \to \mathcal{P}(Y)$ is <em>not</em> <code>$\varepsilon$</code>-Lipschitz. Then there are some $x, x' \in X$ some subset $E \subseteq Y$ of positive measure such that <code>$\left| \ln \frac{d\mu}{d\mu_{x'}}(y) \right| > \varepsilon$</code> for almost all $y \in E$. Letting $E_+$ be the set of all $y \in E$ such that $\ln \frac{d\mu}{d\mu_{x'}}(y) > 0$ and $E_-$ be the set of all $y \in E$ such that $\ln \frac{d\mu}{d\mu_{x'}}(y) &lt; 0$, we see that at least one of $E_+$ and $E_-$ must have positive measure. By potentially swapping $x$ and $x'$, we may assume without loss of generality that $E_+$ has positive measure. Then</p><p>$$
-\mu_x(E_+) = \int_{E_+} \frac{d\mu}{d\mu_{x'}}(y) d\mu_{x'}(y) > \exp(\varepsilon) \int_{E_+} d\mu_{x'}(y) = \exp(\varepsilon) \mu_{x'}(E_+).
-$$</p></div><h2 id=the-dp-topology>The DP topology <a href=#the-dp-topology class=anchor>🔗</a></h2><p>We now have a metric <code>$d_{DP}$</code> on a set <code>$\mathcal{P}(Y)$</code>, and so it induces a topology, which we call the <em>differential privacy</em> or <em>DP topology</em>. A natural question to ask is <em>which</em> topology does it induce, and from there, why should <em>privacy</em> be related to this topology as opposed to one of the other, more familiar topologies. In this section, we take $Y$ to be a second countable, complete metric space, e.g., $\mathbb{R}$ with its usual metric or any finite set with the discrete metric.</p><h3 id=other-topologies>Other topologies <a href=#other-topologies class=anchor>🔗</a></h3><p>There are a few common topologies discussed on the space of measures $\mathcal{P}(Y)$ when $Y$ is a metric space. The first is called the <em>topology of weak convergence</em> or what we&rsquo;ll call the <em>WC topology</em>. In this topology, a sequence of probability measures $\mu_n \in \mathcal{P}(Y)$ converges to a probability measure $\mu \in \mathcal{P}(Y)$ whenever $$\int f(y) d\mu_n(y) \to \int f(y) d\mu(y)$$ for all continuous functions $f : Y \to [-1, 1]$.<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup> This topology is induced by a metric called the <a href=https://en.wikipedia.org/wiki/L%C3%A9vy%E2%80%93Prokhorov_metric target=_blank rel=noopener><em>Prokhorov metric</em>
+$$</p>
+<p>On the other hand, suppose that the map $f : X \to \mathcal{P}(Y)$ is <em>not</em> <code>$\varepsilon$</code>-Lipschitz. Then there are some $x, x' \in X$ some subset $E \subseteq Y$ of positive measure such that <code>$\left| \ln \frac{d\mu}{d\mu_{x'}}(y) \right| &gt; \varepsilon$</code> for almost all $y \in E$. Letting $E_+$ be the set of all $y \in E$ such that $\ln \frac{d\mu}{d\mu_{x'}}(y) &gt; 0$ and $E_-$ be the set of all $y \in E$ such that $\ln \frac{d\mu}{d\mu_{x'}}(y) &lt; 0$, we see that at least one of $E_+$ and $E_-$ must have positive measure. By potentially swapping $x$ and $x'$, we may assume without loss of generality that $E_+$ has positive measure. Then</p>
+<p>$$
+\mu_x(E_+) = \int_{E_+} \frac{d\mu}{d\mu_{x'}}(y) d\mu_{x'}(y) &gt; \exp(\varepsilon) \int_{E_+} d\mu_{x'}(y) = \exp(\varepsilon) \mu_{x'}(E_+).
+$$</p>
+</div>
+<h2 id="the-dp-topology">The DP topology <a href="#the-dp-topology" class="anchor">🔗</a></h2><p>We now have a metric <code>$d_{DP}$</code> on a set <code>$\mathcal{P}(Y)$</code>, and so it induces a topology, which we call the <em>differential privacy</em> or <em>DP topology</em>. A natural question to ask is <em>which</em> topology does it induce, and from there, why should <em>privacy</em> be related to this topology as opposed to one of the other, more familiar topologies. In this section, we take $Y$ to be a second countable, complete metric space, e.g., $\mathbb{R}$ with its usual metric or any finite set with the discrete metric.</p>
+<h3 id="other-topologies">Other topologies <a href="#other-topologies" class="anchor">🔗</a></h3><p>There are a few common topologies discussed on the space of measures $\mathcal{P}(Y)$ when $Y$ is a metric space. The first is called the <em>topology of weak convergence</em> or what we&rsquo;ll call the <em>WC topology</em>. In this topology, a sequence of probability measures $\mu_n \in \mathcal{P}(Y)$ converges to a probability measure $\mu \in \mathcal{P}(Y)$ whenever $$\int f(y) d\mu_n(y) \to \int f(y) d\mu(y)$$ for all continuous functions $f : Y \to [-1, 1]$.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> This topology is induced by a metric called the <a 
+    href="https://en.wikipedia.org/wiki/L%C3%A9vy%E2%80%93Prokhorov_metric"
+    
+    
+     
+      target="_blank" 
+      rel="noopener"
+    
+>
+    <em>Prokhorov metric</em>
 </a>. Specifically, if $\mu$ and $\nu$ are probability measures, we can define
-<code>$$ d_{WC}(\mu, \nu) = \inf \{ \varepsilon > 0 | \mu(A^\varepsilon) \leq \nu(A) + \varepsilon, \nu(A^\varepsilon) \leq \mu(A) + \varepsilon \text{ for all measureable } A \subseteq Y \}. $$</code>
-Here <code>$A^\varepsilon = \bigcup_{a \in A} B_\varepsilon(a)$</code> is the <code>$\varepsilon$</code>-<em>neighborhood</em> of $A$, defined as the union of the balls of radius $\varepsilon$ around every point in $A$.</p><p>The second topology is the <em>total variation</em> or <em>TV topology</em>. In this topology, a sequence of probability measures <code>$\mu_n \in \mathcal{P}(Y)$</code> converges to a probability measure <code>$\mu \in \mathcal{P}(Y)$</code> whenever <code>$$\lim_{n \to \infty} \sup_{f \in \mathcal{F}_{TV}} \left| \int f(y) d\mu_n(y) - \int f(y) d\mu(y)\right| \to 0$$</code> where $\mathcal{F}_{TV}$ is the set of all continuous functions $f : Y \to [-1, 1]$. Note that the distinction between this definition and weak convergence is the order of the quantifiers: weak convergence says that <em>for each function</em> the difference $\left| \int fd\mu_n - \int fd\mu \right|$ must converge to $0$; total variation requires <em>all the differences</em> to converge to $0$ at a uniform rate.</p><p>The TV topology on $\mathcal{P}(Y)$ is induced by the <em>total variation metric</em> on $\mathcal{P}(Y)$. Specifically, $d_{TV}(\mu, \nu) = \sup_{A \subseteq Y} \left| \mu(A) - \nu(A) \right|$.<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup> From the last sentence of the previous paragraph, it is clear that convergence in the TV topology will always yield weak convergence. However, the other direction is not always the case. For instance, the sequence of uniform discrete measures $\mu_n = \sum_{i=1}^n \frac{1}{n} \delta_{i/n}$ supported on $1/n, \ldots, n/n$ converges weakly to the uniform distribution $\mu$ on $[0, 1]$ (this essentially amounts to the statement that bounded continuous functions are Riemann integrable), but clearly $d_{TV}(\mu_n, \mu) = 1$ for all $n$.</p><p>When $Y$ is also compact, we will consider a third topology: the <em>Earth Mover</em> or <em>EM topology</em>, sometimes called the <em>Wasserstein-1 topology</em>. Here a sequence of probability measures $\mu_n \in \mathcal{P}(Y)$ converges to a probability measure $\mu \in \mathcal{P}(Y)$ whenever <code>$$\lim_{n \to \infty} \sup_{f \in \mathcal{F}_{EM}} \left| \int f(y) d\mu_n(y) - \int f(y) d\mu(y)\right| \to 0$$</code> where $\mathcal{F}_{EM}$ is the set of all <em>Lipschitz</em> functions <code>$f : Y \to \mathbb{R}$</code> with Lipschitz constant $\mathrm{Lip}(f) \leq 1$. In a bit of a miracle, it turns out that the EM topology and the WC topology are identical!<sup id=fnref:4><a href=#fn:4 class=footnote-ref role=doc-noteref>4</a></sup> However, the relative distances between measures can vary greatly. (??????????)</p><h3 id=the-form-of-differential-privacy>The &ldquo;form&rdquo; of Differential Privacy <a href=#the-form-of-differential-privacy class=anchor>🔗</a></h3><p>We have now seen three other metrics and the topologies they induce on the space of probability measures. Common to each of these cases was that a sequence of measures $\mu_n$ converged to $\mu$ if $\left| \int f d\mu_n - \int f d\mu \right| \to 0$ for all $f$ in some family $\mathcal{F}$ of (continuous) functions $f : Y \to \mathbb{R}$. In some cases, we could required this convergence to be <em>uniform</em>, i.e., <code>$\sup_{f \in \mathcal{F}} \left| \int f d\mu_n - \int f d\mu \right| \to 0$</code>. Does the DP topology have a similar characterization? The answer is yes.</p><p>We begin by taking <code>$\mathcal{F}_{DP}$</code> to be the set of continuous functions <code>$f : Y \to (0, \infty)$</code> which are bounded above, i.e., there is some <code>$M > 0$</code> such that for <code>$y \in Y$</code> we have <code>$f(y) \leq M$</code>. Note that this guarantees that <code>$\int f d\mu &lt; \infty$</code> for all probability measures <code>$\mu$</code> on $Y$. Moreover, <code>$\{ y : f(y) > c \}$</code> must have positive measure for some $c > 0$ or else their union <code>$\{y : f(y) > 0 \} = Y$</code> would have measure $0$. Thus $\int_Y f d\mu > 0$. We say that a sequence of probability measures $\mu_n$ <em>converges in ratio</em> to $\mu$ whenever the quantity <code>$\sup_{f \in \mathcal{F}_{DP}} \left| \int f d\mu_n / \int f d\mu \right| \to 1$</code>, or equivalently, <code>$\sup_{f \in \mathcal{F}_{DP}} \left| \ln \int f d\mu_n - \ln \int f d\mu \right| \to 0$</code>.</p><p><p class=theorem>A sequence of mutually absolutely continuous probability measures $\mu_n$ converges in ratio to a probability measure $\mu$ if and only if it converges in the DP topology.</p><div class=proof><p>Suppose $\mu_n$ converges to $\mu$ in the DP topology. By DP convergence, the Radon-Nikodym derivative $\frac{d\mu_n}{d\mu}$ converges almost everywhere to $1$ pointwise, and in particular, for every $\varepsilon > 0$ we have for sufficiently large $n$ that $\frac{d\mu_n}{d\mu}(y) \in (\exp(-\varepsilon), \exp(\varepsilon))$ for almost all $y \in Y$. Thus for any <code>$f \in \mathcal{F}_{DP}$</code>, we have that
+<code>$$ d_{WC}(\mu, \nu) = \inf \{ \varepsilon &gt; 0 | \mu(A^\varepsilon) \leq \nu(A) + \varepsilon, \nu(A^\varepsilon) \leq \mu(A) + \varepsilon \text{ for all measureable } A \subseteq Y \}. $$</code>
+Here <code>$A^\varepsilon = \bigcup_{a \in A} B_\varepsilon(a)$</code> is the <code>$\varepsilon$</code>-<em>neighborhood</em> of $A$, defined as the union of the balls of radius $\varepsilon$ around every point in $A$.</p>
+<p>The second topology is the <em>total variation</em> or <em>TV topology</em>. In this topology, a sequence of probability measures <code>$\mu_n \in \mathcal{P}(Y)$</code> converges to a probability measure <code>$\mu \in \mathcal{P}(Y)$</code> whenever <code>$$\lim_{n \to \infty} \sup_{f \in \mathcal{F}_{TV}} \left| \int f(y) d\mu_n(y) - \int f(y) d\mu(y)\right| \to 0$$</code> where $\mathcal{F}_{TV}$ is the set of all continuous functions $f : Y \to [-1, 1]$. Note that the distinction between this definition and weak convergence is the order of the quantifiers: weak convergence says that <em>for each function</em> the difference $\left| \int fd\mu_n - \int fd\mu \right|$ must converge to $0$; total variation requires <em>all the differences</em> to converge to $0$ at a uniform rate.</p>
+<p>The TV topology on $\mathcal{P}(Y)$ is induced by the <em>total variation metric</em> on $\mathcal{P}(Y)$. Specifically, $d_{TV}(\mu, \nu) = \sup_{A \subseteq Y} \left| \mu(A) - \nu(A) \right|$.<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> From the last sentence of the previous paragraph, it is clear that convergence in the TV topology will always yield weak convergence. However, the other direction is not always the case. For instance, the sequence of uniform discrete measures $\mu_n = \sum_{i=1}^n \frac{1}{n} \delta_{i/n}$ supported on $1/n, \ldots, n/n$ converges weakly to the uniform distribution $\mu$ on $[0, 1]$ (this essentially amounts to the statement that bounded continuous functions are Riemann integrable), but clearly $d_{TV}(\mu_n, \mu) = 1$ for all $n$.</p>
+<p>When $Y$ is also compact, we will consider a third topology: the <em>Earth Mover</em> or <em>EM topology</em>, sometimes called the <em>Wasserstein-1 topology</em>. Here a sequence of probability measures $\mu_n \in \mathcal{P}(Y)$ converges to a probability measure $\mu \in \mathcal{P}(Y)$ whenever <code>$$\lim_{n \to \infty} \sup_{f \in \mathcal{F}_{EM}} \left| \int f(y) d\mu_n(y) - \int f(y) d\mu(y)\right| \to 0$$</code> where $\mathcal{F}_{EM}$ is the set of all <em>Lipschitz</em> functions <code>$f : Y \to \mathbb{R}$</code> with Lipschitz constant $\mathrm{Lip}(f) \leq 1$. In a bit of a miracle, it turns out that the EM topology and the WC topology are identical!<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> However, the relative distances between measures can vary greatly. (??????????)</p>
+<h3 id="the-form-of-differential-privacy">The &ldquo;form&rdquo; of Differential Privacy <a href="#the-form-of-differential-privacy" class="anchor">🔗</a></h3><p>We have now seen three other metrics and the topologies they induce on the space of probability measures. Common to each of these cases was that a sequence of measures $\mu_n$ converged to $\mu$ if $\left| \int f d\mu_n - \int f d\mu \right| \to 0$ for all $f$ in some family $\mathcal{F}$ of (continuous) functions $f : Y \to \mathbb{R}$. In some cases, we could required this convergence to be <em>uniform</em>, i.e., <code>$\sup_{f \in \mathcal{F}} \left| \int f d\mu_n - \int f d\mu \right| \to 0$</code>. Does the DP topology have a similar characterization? The answer is yes.</p>
+<p>We begin by taking <code>$\mathcal{F}_{DP}$</code> to be the set of continuous functions <code>$f : Y \to (0, \infty)$</code> which are bounded above, i.e., there is some <code>$M &gt; 0$</code> such that for <code>$y \in Y$</code> we have <code>$f(y) \leq M$</code>. Note that this guarantees that <code>$\int f d\mu &lt; \infty$</code> for all probability measures <code>$\mu$</code> on $Y$. Moreover, <code>$\{ y : f(y) &gt; c \}$</code> must have positive measure for some $c &gt; 0$ or else their union <code>$\{y : f(y) &gt; 0 \} = Y$</code> would have measure $0$. Thus $\int_Y f d\mu &gt; 0$. We say that a sequence of probability measures $\mu_n$ <em>converges in ratio</em> to $\mu$ whenever the quantity <code>$\sup_{f \in \mathcal{F}_{DP}} \left| \int f d\mu_n / \int f d\mu \right| \to 1$</code>, or equivalently, <code>$\sup_{f \in \mathcal{F}_{DP}} \left| \ln \int f d\mu_n - \ln \int f d\mu \right| \to 0$</code>.</p>
+<p><p class="theorem ">
+    
+A sequence of mutually absolutely continuous probability measures $\mu_n$ converges in ratio to a probability measure $\mu$ if and only if it converges in the DP topology.
+
+</p>
+<div class="proof "><p>Suppose $\mu_n$ converges to $\mu$ in the DP topology. By DP convergence, the Radon-Nikodym derivative $\frac{d\mu_n}{d\mu}$ converges almost everywhere to $1$ pointwise, and in particular, for every $\varepsilon &gt; 0$ we have for sufficiently large $n$ that $\frac{d\mu_n}{d\mu}(y) \in (\exp(-\varepsilon), \exp(\varepsilon))$ for almost all $y \in Y$. Thus for any <code>$f \in \mathcal{F}_{DP}$</code>, we have that
 <code>$$ \int f d\mu_n = \int f \frac{d\mu_n}{d\mu} d\mu \leq \exp(\varepsilon) \int f d\mu, $$</code>
-and similarly for a lower bound. Thus, $\sup_{f \in \mathcal{F}} \left| \ln \int f d\mu_n - \ln \int f d\mu \right|$ is bounded above by $\varepsilon$, proving that $\mu_n$ converges in ratio to $\mu$.</p><p>In the other direction, suppose that $\mu_n$ does not converge to $\mu$ in the DP topology. Then there is a $C > 1$ such that for each sufficiently large $n$ there is a set $E_n$ of positive measure where the Radon-Nikodym derivative $\frac{d\mu_n}{d\mu}$ is either larger than $C$ or less than $1 / C$. (Recall that since $\mu_n$ and $\mu$ are mutually absolutely continuous, $E_n$ has positive measure with respect to any of the measures in question if and only if it has positive measure with respect to <em>all</em> measures in question.) By passing to a subsequence, we may assume that <em>all</em> the derivatives are either larger than $C$ or less than $1 / C$. Let&rsquo;s take the second case.</p><p>If we mimic the definition of differential privacy, we would consider the indicator function $I_{E_n}$ and say that $\int I_{E_n} d\mu_n / \int I_{E_n} d\mu &lt; \frac{1}{C} \mu(E_n) / \mu(E_n) = \frac{1}{C} &lt; 1$ which we would hope mean that $\mu_n$ does not converge in ratio to $\mu$. However, $I_{E_n}$ is not necessarily in $\mathcal{F}$, and so we need to create an approximation.</p><p>To approximate <code>$I_{E_n}$</code>, we will need several positive constants to be choosen later. We will name them <code>$\varepsilon > 0$</code>, which will be the constant associated with differential privacy and <code>$\rho > 0$</code> which will be a <em>regularity</em> parameter. To begin, recall that every Borel probability measure on a metric space is regular, i.e., if <code>$\nu$</code> is a probability measure on a metric space <code>$(X, d_X)$</code>, <code>$E \subseteq X$</code> is a Borel measureable set, and <code>$\rho > 0$</code> is any constant, then there exists some closed set <code>$F \subseteq E$</code> and some open set <code>$G \supseteq E$</code> such that <code>$\nu(G - F) &lt; \rho$</code>. Thus, for each <code>$n$</code>, we may choose <code>$F_n \subseteq E_n \subseteq G_n$</code> with <code>$\mu_n(G_n - F_n) &lt; \rho$</code> and <code>$\mu(G_n - F_n) &lt; \rho$</code>.</p><p>Now for any <code>$\varepsilon > 0$</code>, define the function
+and similarly for a lower bound. Thus, $\sup_{f \in \mathcal{F}} \left| \ln \int f d\mu_n - \ln \int f d\mu \right|$ is bounded above by $\varepsilon$, proving that $\mu_n$ converges in ratio to $\mu$.</p>
+<p>In the other direction, suppose that $\mu_n$ does not converge to $\mu$ in the DP topology. Then there is a $C &gt; 1$ such that for each sufficiently large $n$ there is a set $E_n$ of positive measure where the Radon-Nikodym derivative $\frac{d\mu_n}{d\mu}$ is either larger than $C$ or less than $1 / C$. (Recall that since $\mu_n$ and $\mu$ are mutually absolutely continuous, $E_n$ has positive measure with respect to any of the measures in question if and only if it has positive measure with respect to <em>all</em> measures in question.) By passing to a subsequence, we may assume that <em>all</em> the derivatives are either larger than $C$ or less than $1 / C$. Let&rsquo;s take the second case.</p>
+<p>If we mimic the definition of differential privacy, we would consider the indicator function $I_{E_n}$ and say that $\int I_{E_n} d\mu_n / \int I_{E_n} d\mu &lt; \frac{1}{C} \mu(E_n) / \mu(E_n) = \frac{1}{C} &lt; 1$ which we would hope mean that $\mu_n$ does not converge in ratio to $\mu$. However, $I_{E_n}$ is not necessarily in $\mathcal{F}$, and so we need to create an approximation.</p>
+<p>To approximate <code>$I_{E_n}$</code>, we will need several positive constants to be choosen later. We will name them <code>$\varepsilon &gt; 0$</code>, which will be the constant associated with differential privacy and <code>$\rho &gt; 0$</code> which will be a <em>regularity</em> parameter. To begin, recall that every Borel probability measure on a metric space is regular, i.e., if <code>$\nu$</code> is a probability measure on a metric space <code>$(X, d_X)$</code>, <code>$E \subseteq X$</code> is a Borel measureable set, and <code>$\rho &gt; 0$</code> is any constant, then there exists some closed set <code>$F \subseteq E$</code> and some open set <code>$G \supseteq E$</code> such that <code>$\nu(G - F) &lt; \rho$</code>. Thus, for each <code>$n$</code>, we may choose <code>$F_n \subseteq E_n \subseteq G_n$</code> with <code>$\mu_n(G_n - F_n) &lt; \rho$</code> and <code>$\mu(G_n - F_n) &lt; \rho$</code>.</p>
+<p>Now for any <code>$\varepsilon &gt; 0$</code>, define the function
 <code>$$ f(y) = f_{n\varepsilon}^{\rho}(y) = \max\{ \lambda, \exp(-\varepsilon d_Y(y, F_n)) \}. $$</code>
-Here for any set $A \subseteq Y$ we define <code>$d_Y(y, A) = \inf_{y' \in A} d_Y(y, y')$</code>.</p><p>Note that this function is continuous and bounded above by $1$, so $f \in \mathcal{F}_{DP}$. Moreover, it is equal to $1$ precisely on <code>$F_n$</code>. Using these facts, we can write
+Here for any set $A \subseteq Y$ we define <code>$d_Y(y, A) = \inf_{y' \in A} d_Y(y, y')$</code>.</p>
+<p>Note that this function is continuous and bounded above by $1$, so $f \in \mathcal{F}_{DP}$. Moreover, it is equal to $1$ precisely on <code>$F_n$</code>. Using these facts, we can write
 <code>$$ \int_Y f(y) d\mu_n(y) = \int_{F_n} f(y) d\mu_n(y) + \int_{G_n - F_n} f(y) d\mu_n(y) + \int_{Y - G_n} f(y) d\mu_n(y). $$</code>
-The first of these integrals is just <code>$\mu_n(F_n)$</code>, and by our assumptions, we know that $\mu_n(F_n) \leq \frac{1}{C} \mu(F_n)$. The second of these integrals is bounded above by $\mu_n(G_n - F_n) &lt; \rho$ by assumption.</p><p>Finally, <code>$d_Y(y, F_n)$</code> is uniformly bounded away from $0$ for all $y \in Y - G_n$, i.e., there exists some $C' > 0$ such that $d_Y(y, F_n) > C'$ for all $y \in Y - G_n$. Thus, $f(y) &lt; \exp(-\varepsilon C')$.</p><p>Thus, in total we have
+The first of these integrals is just <code>$\mu_n(F_n)$</code>, and by our assumptions, we know that $\mu_n(F_n) \leq \frac{1}{C} \mu(F_n)$. The second of these integrals is bounded above by $\mu_n(G_n - F_n) &lt; \rho$ by assumption.</p>
+<p>Finally, <code>$d_Y(y, F_n)$</code> is uniformly bounded away from $0$ for all $y \in Y - G_n$, i.e., there exists some $C' &gt; 0$ such that $d_Y(y, F_n) &gt; C'$ for all $y \in Y - G_n$. Thus, $f(y) &lt; \exp(-\varepsilon C')$.</p>
+<p>Thus, in total we have
 $$
 \int_Y f(y) d\mu_n(y) \leq
 \frac{1}{C}\mu(F_n) + \rho + \exp(-\varepsilon C')\mu_n(Y - G_n).
 $$
-By letting $\rho \to 0$ and $\varepsilon \to \infty$ (dependent on $\rho$), we see that we may make this right hand quantity as close to $\frac{1}{C}\mu(F_n)$ as we want.</p><p>On the other hand, we can bound the denominator in our definition by
+By letting $\rho \to 0$ and $\varepsilon \to \infty$ (dependent on $\rho$), we see that we may make this right hand quantity as close to $\frac{1}{C}\mu(F_n)$ as we want.</p>
+<p>On the other hand, we can bound the denominator in our definition by
 $$
 \int_Y f d\mu \geq \int_{F_n} f d\mu = \mu(F_n).
 $$
 Thus, the ratio
 $$
 \frac{\int_Y f d\mu_n}{\int_Y fd\mu} \leq \frac{\frac{1}{C}\mu(F_n) + \rho + \exp(-\varepsilon C')\mu_n(Y - G_n)}{\mu(F_n)} \to \frac{1}{C}.
-$$</p><p>To finish the proof, we must consider the case when $E_n$ is such that $\frac{d\mu_n}{d\mu} > C$. But then $\frac{d\mu}{d\mu_n} &lt; 1/C$ on $E_n$ and a similar proof allows us to show that
+$$</p>
+<p>To finish the proof, we must consider the case when $E_n$ is such that $\frac{d\mu_n}{d\mu} &gt; C$. But then $\frac{d\mu}{d\mu_n} &lt; 1/C$ on $E_n$ and a similar proof allows us to show that
 $$
 \frac{\int_Y f d\mu_n}{\int_Y fd\mu} \geq \frac{\mu_n(F_n)}{\frac{1}{C}\mu_n(F_n) + \rho + \exp(-\varepsilon C')\mu(Y - G_n)} \to C.
-$$</p><p>In either case, for all $\varepsilon' > 0$, we have found a function <code>$f_n \in \mathcal{F}_{DP}$</code> such that <code>$\ln\left| \int_Y f d\mu_n / \int_Y f d\mu \right| > \ln(C) - \varepsilon'$</code> for all $n$. That is, $\sup_{f \in \mathcal{F}} \ln\left| \int_Y f d\mu_n / \int_Y f d\mu \right| > \ln(C)$ for all $n$. Thus, $\mu_n$ cannot converge in ratio to $\mu$ when $\mu_n$ does not converge in the DP topology to $\mu$.</p></div></p><p class=remark>In the statement of the above theorem, we required that the <code>$\mu_n$</code> and <code>$\mu$</code> be mutually absolutely continuous. However, it is clear that in order to converge in the DP topology, for sufficiently large <code>$n$</code>, the <code>$\mu_n$</code> and <code>$\mu$</code> must be mutually absolutely continuous. Moreover, a similar approximation argument to the above shows that convergence in ratio <em>also</em> requires <code>$\mu_n$</code> and <code>$\mu$</code> to be mutually absolutely continuous for sufficiently large $n$, so the condition can be dropped.</p><h3 id=comparing-the-dp-topology-to-the-tv-topology>Comparing the DP topology to the TV topology <a href=#comparing-the-dp-topology-to-the-tv-topology class=anchor>🔗</a></h3><p>In this section, we compare convergence in the DP topology to the TV topology. We begin with two examples showing that convergence in the TV topology does <em>not</em> imply convergence in the DP topology.</p><div class=example>Consider the probability measures $\mu_n$ on $[0, 1]$ which are defined by a probability density function equal to $n / (n-1)$ on $[1/n, 1]$ and $0$ on $[0, 1/n)$. These measures converge in total variation to the uniform measure, but $\mu_m \not\ll \mu_n$ for all $m > n$ and so they cannot converge the DP topology to any measure.</div><p>You might object that these measures do not have the same support and so are running afoul of the &ldquo;mutual absolute continuity&rdquo; requirement. But we can rectify this.</p><div class=example>Let $\mu$ and $\mu_n$ be as in the previous example. Then consider the sequence of probability measures $\nu_n = \frac{1}{n}\mu + \frac{n - 1}{n}\mu_n$. This sequence of measures <em>also</em> converges in total variation to $\mu$, but does <em>not</em> converge in the DP topology to $\mu$ as $|\ln \frac{d\mu_n}{d\mu}(y)| = n$ for all $n$ and all $y \in [0, 1/n)$, and so this sequence diverges in the DP distance.</div><p>On the other hand, the DP topology is, in fact, coarser than the TV topology, which is to say:</p><p class=theorem>If a sequence of measures $\mu_n$ converges to $\mu$ in the DP topology, it converges in the TV topology, but not vice-versa.</p><div class=proof><p>Suppose $\mu_n$ converges to $\mu$ in the DP distance. Then <code>$\left| \ln \frac{d\mu_n}{d\mu}(y) \right| \to 0$</code> for almost every $y$, or, to put it another way, <code>$\frac{d\mu_n}{d\mu}(y) \to 1$</code> almost everywhere. Since $\mu$ is a probability measure, the constant function $2$ is integrable, and so <code>$\left|\frac{d\mu_n}{d\mu}(y) - 1\right|$</code> is bounded above by an integrable function for sufficiently large <code>$n$</code> and, moreover, converges to the constant function <code>$0$</code> almost everywhere.</p><p>Thus,
+$$</p>
+<p>In either case, for all $\varepsilon' &gt; 0$, we have found a function <code>$f_n \in \mathcal{F}_{DP}$</code> such that <code>$\ln\left| \int_Y f d\mu_n / \int_Y f d\mu \right| &gt; \ln(C) - \varepsilon'$</code> for all $n$. That is, $\sup_{f \in \mathcal{F}} \ln\left| \int_Y f d\mu_n / \int_Y f d\mu \right| &gt; \ln(C)$ for all $n$. Thus, $\mu_n$ cannot converge in ratio to $\mu$ when $\mu_n$ does not converge in the DP topology to $\mu$.</p>
+</div></p>
+<p class="remark ">In the statement of the above theorem, we required that the <code>$\mu_n$</code> and <code>$\mu$</code> be mutually absolutely continuous. However, it is clear that in order to converge in the DP topology, for sufficiently large <code>$n$</code>, the <code>$\mu_n$</code> and <code>$\mu$</code> must be mutually absolutely continuous. Moreover, a similar approximation argument to the above shows that convergence in ratio <em>also</em> requires <code>$\mu_n$</code> and <code>$\mu$</code> to be mutually absolutely continuous for sufficiently large $n$, so the condition can be dropped.</p>
+<h3 id="comparing-the-dp-topology-to-the-tv-topology">Comparing the DP topology to the TV topology <a href="#comparing-the-dp-topology-to-the-tv-topology" class="anchor">🔗</a></h3><p>In this section, we compare convergence in the DP topology to the TV topology. We begin with two examples showing that convergence in the TV topology does <em>not</em> imply convergence in the DP topology.</p>
+<div class="example ">Consider the probability measures $\mu_n$ on $[0, 1]$ which are defined by a probability density function equal to $n / (n-1)$ on $[1/n, 1]$ and $0$ on $[0, 1/n)$. These measures converge in total variation to the uniform measure, but $\mu_m \not\ll \mu_n$ for all $m &gt; n$ and so they cannot converge the DP topology to any measure.</div>
+<p>You might object that these measures do not have the same support and so are running afoul of the &ldquo;mutual absolute continuity&rdquo; requirement.  But we can rectify this.</p>
+<div class="example ">Let $\mu$ and $\mu_n$ be as in the previous example. Then consider the sequence of probability measures $\nu_n = \frac{1}{n}\mu + \frac{n - 1}{n}\mu_n$. This sequence of measures <em>also</em> converges in total variation to $\mu$, but does <em>not</em> converge in the DP topology to $\mu$ as $|\ln \frac{d\mu_n}{d\mu}(y)| = n$ for all $n$ and all $y \in [0, 1/n)$, and so this sequence diverges in the DP distance.</div>
+<p>On the other hand, the DP topology is, in fact, coarser than the TV topology, which is to say:</p>
+<p class="theorem ">
+    
+If a sequence of measures $\mu_n$ converges to $\mu$ in the DP topology, it converges in the TV topology, but not vice-versa.
+
+</p>
+<div class="proof "><p>Suppose $\mu_n$ converges to $\mu$ in the DP distance. Then <code>$\left| \ln \frac{d\mu_n}{d\mu}(y) \right| \to 0$</code> for almost every $y$, or, to put it another way, <code>$\frac{d\mu_n}{d\mu}(y) \to 1$</code> almost everywhere. Since $\mu$ is a probability measure, the constant function $2$ is integrable, and so <code>$\left|\frac{d\mu_n}{d\mu}(y) - 1\right|$</code> is bounded above by an integrable function for sufficiently large <code>$n$</code> and, moreover, converges to the constant function <code>$0$</code> almost everywhere.</p>
+<p>Thus,
 <code>$$\left|\mu_n(A) - \mu(A)\right| = \left| \int_A \left(\frac{d\mu_n}{d\mu}(y) - 1\right) dy \right| \leq \int_A \left| \frac{d\mu_n}{d\mu}(y) - 1 \right| dy.$$</code>
-By the dominated convergence theorem, this last integral converges to $0$ as $n \to \infty$.</p></div><h2 id=the-weak-dp-topology>The Weak-DP Topology <a href=#the-weak-dp-topology class=anchor>🔗</a></h2><p>As we saw in the previous section, the DP topology on <code>$\mathcal{P}(Y)$</code> is defined by saying that <code>$\mu_n$</code> converges to <code>$\mu$</code> when we have <code>$\sup_{f \in \mathcal{F}_{DP}} \left| \ln \int f d\mu_n - \ln \int f d\mu \right| \to 0$</code>. We noted that a similar definition defines the TV topology, by replacing the set of test functions $\mathcal{F}_{DP}$ with the set of test functions <code>$\mathcal{F}_{TV}$</code>. We also saw that the WC topology is defined by dropping the <code>$\sup$</code> in the definition above. By analogy, then, we can attempt to define a topology on <code>$\mathcal{P}(Y)$</code> by saying a sequence of measures $\mu_n$ converges to $\mu$ whenever for all <code>$f \in \mathcal{F}_{DP}$</code> we have <code>$\left| \ln \int f d\mu_n - \ln \int f d\mu \right| \to 0$</code>. This turns out to be the same topology as the weak topology.</p><p>To see why, recall that by assumption, if $f : Y \to (0, \infty)$ is continuous and bounded, there must be some $c > 0$ such that <code>$\{ y : f(y) > c \}$</code> has positive measure or else their union <code>$\{ y : f(y) > 0 \} = Y$</code> would have measure $0$. Thus <code>$\int f d\mu > 0$</code>. Then to show weak convergence implies convergence in the proposed topology, simply note that for sufficiently large $n$, <code>$\int fd\mu_n \to \int f d\mu > 0$</code> implies that <code>$\int f d\mu_n > 0$</code>, and since $\ln$ is continuous, <code>$\ln \int fd\mu_n \to \ln \int f d\mu$</code>. For the other direction, if $f : Y \to [-1, 1]$ is continuous and bounded, then the function $g(y) = f(y) + 2$ is a continuous, bounded function $g: Y \to (0, \infty)$, and a similar argument utilizing the fact that $\exp$ is continuous finishes the proof.</p><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>There are a few possible definitions of <em>randomized function</em>. For instance, you could say that a randomized function $f : X \to Y$ is actually a function $f : X \to \mathcal{P}(Y)$ the space of probability measures on $Y$ (the definition we&rsquo;re using here). You could also think of a randomized function $f : X \to Y$ as a $\operatorname{Hom}(X, Y)$-valued random varaiable, i.e., a map $f : \Omega \to \operatorname{Hom}(X, Y)$. Then composing with the restriction map $\operatorname{Hom}(X, Y) \to \operatorname{Hom}({x}, Y)$ and the canonical isomorphism $\operatorname{Hom}({x}, Y) \cong Y$, you recover a map $X \to \mathcal{P}(Y)$ by pushing forward the measure on $\Omega$.</p><p>Of course, the space $\operatorname{Hom}(X, Y)$ can be quite badly behaved in general, and it is not clear that we want to consider only continuous maps $X \to Y$. (Consider, for instance, the paucity of continuous maps <code>$g: \mathbb{R} \to \{0, 1\}$</code>.) Resolving these technical issues is difficult, and so we instead prefer for this post to consider a <em>randomized function</em> definitionally as a map $f : X \to \mathcal{P}(Y)$.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote><p>There are several other equivalent definitions of weak convergence, which are related by the so-called <a href=https://en.wikipedia.org/wiki/Convergence_of_measures#Weak_convergence_of_measures target=_blank rel=noopener>portmanteau theorem
-</a>.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3 role=doc-endnote><p>The proof of this fact follows the same basic outline as that of Theorem ???? and uses two key observations: since $Y$ is a metric space, every Borel probability measure is regular; and the function <code>$f(y) = \max\{ 0, 1 - \varepsilon d_Y(y, F) \}$</code> is continuous and bounded.&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:4 role=doc-endnote><p>The Wasserstein metrics can be defined even when $Y$ is not compact. However, this definition relies on the fact that the underlying metric on $Y$ is bounded. When $Y$ is compact, this is automatically true.&#160;<a href=#fnref:4 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div><div class=tags><a href=https://blog.kevinhayeswilson.com/tags/differential-privacy>differential privacy</a></div></section></main><footer id=footer><div id=social><a class=symbol href=https://github.com/khwilson target=_blank><svg fill="#bbb" width="28" height="28" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>Github</title><desc>Created with Sketch.</desc><defs/><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Social-Icons---Rounded-Black" transform="translate(-264.000000, -939.000000)"><g id="Github" transform="translate(264.000000, 939.000000)"><path d="M8 72H64c4.418278.0 8-3.581722 8-8V8c0-4.418278-3.581722-8-8-8H8c-4.418278 811624501e-24-8 3.581722-8 8V64c541083001e-24 4.418278 3.581722 8 8 8z" id="Rounded" fill="#bbb"/><path d="M35.9985 13C22.746 13 12 23.7870921 12 37.096644c0 10.6440272 6.876 19.6751861 16.4145 22.8617681C29.6145 60.1797862 30.0525 59.4358488 30.0525 58.7973276 30.0525 58.2250681 30.0315 56.7100863 30.0195 54.6996482c-6.6765 1.4562499-8.085-3.2302544-8.085-3.2302544-1.0905-2.7829884-2.664-3.5239139-2.664-3.5239139C17.091 46.4500754 19.4355 46.4801943 19.4355 46.4801943c2.4075.1701719 3.675 2.4833051 3.675 2.4833051 2.142 3.6820383 5.6175 2.6188404 6.9855 2.0014024C30.3135 49.4077535 30.9345 48.3460615 31.62 47.7436831 26.2905 47.1352808 20.688 45.0691228 20.688 35.8361671c0-2.6308879.9345-4.781379 2.4705-6.4665327C22.911 28.7597262 22.0875 26.3110578 23.3925 22.9934585c0 0 2.016-.6475568 6.6 2.4697516C31.908 24.9285993 33.96 24.6620468 36.0015 24.6515052 38.04 24.6620468 40.0935 24.9285993 42.0105 25.4632101c4.581-3.1173084 6.5925-2.4697516 6.5925-2.4697516C49.9125 26.3110578 49.089 28.7597262 48.8415 29.3696344 50.3805 31.0547881 51.309 33.2052792 51.309 35.8361671c0 9.2555448-5.6115 11.29309-10.9575 11.8894446.860999999999997.7439374 1.629 2.2137408 1.629 4.4621184C41.9805 55.4089489 41.9505 58.0067059 41.9505 58.7973276 41.9505 59.4418726 42.3825 60.1918338 43.6005 59.9554002 53.13 56.7627944 60 47.7376593 60 37.096644 60 23.7870921 49.254 13 35.9985 13" fill="#fff"/></g></g></g></svg></a><a class=symbol href=https://twitter.com/khayeswilson target=_blank><svg fill="#bbb" width="28" height="28" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="438.536" height="438.536" viewBox="0 0 438.536 438.536" style="enable-background:new 0 0 438.536 438.536"><g><path d="M414.41 24.123C398.333 8.042 378.963.0 356.315.0H82.228C59.58.0 40.21 8.042 24.126 24.123 8.045 40.207.003 59.576.003 82.225v274.084c0 22.647 8.042 42.018 24.123 58.102 16.084 16.084 35.454 24.126 58.102 24.126h274.084c22.648.0 42.018-8.042 58.095-24.126 16.084-16.084 24.126-35.454 24.126-58.102V82.225C438.532 59.576 430.49 40.204 414.41 24.123zM335.471 168.735c.191 1.713.288 4.278.288 7.71.0 15.989-2.334 32.025-6.995 48.104-4.661 16.087-11.8 31.504-21.416 46.254-9.606 14.749-21.074 27.791-34.396 39.115-13.325 11.32-29.311 20.365-47.968 27.117-18.648 6.762-38.637 10.143-59.953 10.143-33.116.0-63.76-8.952-91.931-26.836 4.568.568 9.329.855 14.275.855 27.6.0 52.439-8.565 74.519-25.7-12.941-.185-24.506-4.179-34.688-11.991-10.185-7.803-17.273-17.699-21.271-29.691 4.947.76 8.658 1.137 11.132 1.137 4.187.0 9.042-.76 14.56-2.279-13.894-2.669-25.598-9.562-35.115-20.697-9.519-11.136-14.277-23.84-14.277-38.114v-.571c10.085 4.755 19.602 7.229 28.549 7.422-17.321-11.613-25.981-28.265-25.981-49.963.0-10.66 2.758-20.747 8.278-30.264 15.035 18.464 33.311 33.213 54.816 44.252 21.507 11.038 44.54 17.227 69.092 18.558-.95-3.616-1.427-8.186-1.427-13.704.0-16.562 5.853-30.692 17.56-42.399 11.703-11.706 25.837-17.561 42.394-17.561 17.515.0 32.079 6.283 43.688 18.846 13.134-2.474 25.892-7.33 38.26-14.56-4.757 14.652-13.613 25.788-26.55 33.402 12.368-1.716 23.88-4.95 34.537-9.708C357.458 149.793 347.462 160.166 335.471 168.735z"/></g></svg></a></div><p class=copyright>© Copyright
-2021
-<span class=split><svg fill="#bbb" width="15" height="15" id="heart-15" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><path d="M13.91 6.75c-1.17 2.25-4.3 5.31-6.07 6.94-.1903.1718-.4797.1718-.67.0C5.39 12.06 2.26 9 1.09 6.75-1.48 1.8 5-1.5 7.5 3.45 10-1.5 16.48 1.8 13.91 6.75z"/></svg></span>Kevin H. Wilson</p><p class=powerby>Powered by <a href=http://www.gohugo.io/>Hugo</a> Theme By <a href=https://github.com/nodejh/hugo-theme-cactus-plus>nodejh</a></p></footer><script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['\\[','\\]']],processEscapes:!0,processEnvironments:!0},options:{skipHtmlTags:['script','noscript','style','textarea','pre']}},window.addEventListener('load',a=>{document.querySelectorAll("mjx-container").forEach(function(a){a.parentElement.classList+='has-jax'})})</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js></script></body></html>
+By the dominated convergence theorem, this last integral converges to $0$ as $n \to \infty$.</p>
+</div>
+<h2 id="the-weak-dp-topology">The Weak-DP Topology <a href="#the-weak-dp-topology" class="anchor">🔗</a></h2><p>As we saw in the previous section, the DP topology on <code>$\mathcal{P}(Y)$</code> is defined by saying that <code>$\mu_n$</code> converges to <code>$\mu$</code> when we have <code>$\sup_{f \in \mathcal{F}_{DP}} \left| \ln \int f d\mu_n - \ln \int f d\mu \right| \to 0$</code>. We noted that a similar definition defines the TV topology, by replacing the set of test functions $\mathcal{F}_{DP}$ with the set of test functions <code>$\mathcal{F}_{TV}$</code>. We also saw that the WC topology is defined by dropping the <code>$\sup$</code> in the definition above. By analogy, then, we can attempt to define a topology on <code>$\mathcal{P}(Y)$</code> by saying a sequence of measures $\mu_n$ converges to $\mu$ whenever for all <code>$f \in \mathcal{F}_{DP}$</code> we have <code>$\left| \ln \int f d\mu_n - \ln \int f d\mu \right| \to 0$</code>. This turns out to be the same topology as the weak topology.</p>
+<p>To see why, recall that by assumption, if $f : Y \to (0, \infty)$ is continuous and bounded, there must be some $c &gt; 0$ such that <code>$\{ y : f(y) &gt; c \}$</code> has positive measure or else their union <code>$\{ y : f(y) &gt; 0 \} = Y$</code> would have measure $0$. Thus <code>$\int f d\mu &gt; 0$</code>. Then to show weak convergence implies convergence in the proposed topology, simply note that for sufficiently large $n$, <code>$\int fd\mu_n \to \int f d\mu &gt; 0$</code> implies that <code>$\int f d\mu_n &gt; 0$</code>, and since $\ln$ is continuous, <code>$\ln \int fd\mu_n \to \ln \int f d\mu$</code>. For the other direction, if $f : Y \to [-1, 1]$ is continuous and bounded, then the function $g(y) = f(y) + 2$ is a continuous, bounded function $g: Y \to (0, \infty)$, and a similar argument utilizing the fact that $\exp$ is continuous finishes the proof.</p>
+<p>However, a large part of the motivation behind differential privacy is the requirement that the family of measures given by a randomized function $f : X \to \mathcal{P}(Y)$ is mutually absolutely continuous. This inspires the following definition of the <em>weak-DP</em> topology: A sequence of probability meausres $\mu_n$ is said to convere in the weak-DP topology to a probability measure $\mu$ if it converges in the weak topology <em>and</em> $\mu_n$ and $\mu$ are mutually absolutely continuous for sufficiently large $n$. This topology is of course metrizable: simply take the Prokhorov metric $d_{WC}$ on $\mathcal{P}(Y)$ and say <code>$$d_{WDP}(\mu, \nu) = \begin{cases} d_{WC}(\mu, \nu) &amp; \mu, \nu \text{ mutually absolutely continuous} \\ \infty &amp; \text{ otherwise.} \end{cases} $$</code> (Of course, this is not necessarily a _metric_ because it can take on infinite values. So an alternative definition would take <code>$d'_{WDP}(\mu, \nu) = \min\{ d_{WDP}(\mu, \nu), K \}$</code> for some any $K &gt; 0$. These &ldquo;metrics&rdquo; yield the same topology.)</p>
+<p>This metric, however, is&hellip;..</p>
+<p>Recall that a collection of measures $\mathcal{M} \subseteq \mathcal{P}(Y)$ is <em>tight</em> if for all $\varepsilon &gt; 0$ there exists a compact (hence closed hence measureable) subset $K \subseteq Y$ such that for all $\mu \in \mathcal{M}$ we have that $\mu(K) &gt; 1 - \varepsilon$. A fundamental theorem in the theory of weak convergence is <em>Prokhorov&rsquo;s Theorem</em>, which states that a the closure $\Bar{\mathcal{M}}$ in the weak topology on $\mathcal{P}(Y)$ is compact if and only if $\mathcal{M}$ is tight. The weak-DP topology admits a similar characterization.</p>
+<p>Say that a collection of measures $\mathcal{M} \subseteq \mathcal{P}(Y)$ is <em>DP-tight</em> if it is tight and $\varepsilon &gt; 0$ there exists a compact (hence closed hence measureable) subset $K \subseteq Y$ such that for all $\mu, \nu \in \mathcal{M}$, $\mu(K) / \nu(K) &lt; \varepsilon$.</p>
+<p class="theorem ">
+    
+The closure $\Bar{\mathcal{M}}$ of a collection of measures $\mathcal{M} \subseteq \mathcal{P}(Y)$ in the weak-DP topology is compact if and only if $\mathcal{M}$ is DP-tight.
+
+</p>
+<div class="proof "></div>
+<h2 id="existence-of-optimal-couplings">Existence of Optimal Couplings <a href="#existence-of-optimal-couplings" class="anchor">🔗</a></h2><h2 id="dp-kantorovich-duality">DP-Kantorovich Duality <a href="#dp-kantorovich-duality" class="anchor">🔗</a></h2><h3 id="comparing-the-dp-topology-to-the-em-topology">Comparing the DP topology to the EM topology <a href="#comparing-the-dp-topology-to-the-em-topology" class="anchor">🔗</a></h3><p>When $Y$ is compact, we saw above that the distinction between the EM topology and the TV topology was that the set of functions <code>$\mathcal{F}_{EM} \subseteq \mathcal{F}_{TV}$</code> was such that <code>$f \in \mathcal{F}_{EM}$</code> if and only if it had Lipschitz constant at most $1$. Indeed, we can actually restrict <code>$\mathcal{F}_{TV}$</code> to the set of all <em>Lipschitz</em> functions <code>$f : Y \to \mathbb{R}$</code> and the resulting topology is still the TV topology. The distinction is entirely in the fact that the functions are Lipschitz with a uniformly bounded constant.</p>
+<p>This leads to the natural question: When $Y$ is compact, does the set of functions <code>$\mathcal{F}_{DP}^{\mathrm{Lip}} \subseteq \mathcal{F}_{DP}$</code> consisting of functions $f : Y \to (0, \infty)$ which are Lipschitz with $\mathrm{Lip}(f) \leq 1$ yield a different topology on $\mathcal{P}(Y)$ than the DP topology. Here we take the metric on $(0, \infty)$ to be the natural metric $d_+(x, y) = \left| \ln x - \ln y \right|$.</p>
+<p>From our proof that convergence in ratio is equivalent to DP convergence, we note that the functions <code>$f_{n\varepsilon}^{\rho}$</code> were in fact Lipschitz with <code>$\mathrm{Lip}(f_{n\varepsilon}^{\rho}) \leq \varepsilon$</code>. However, in order ot get a good enough approximation to <code>$I_{E_n}$</code>, we needed to let <code>$\varepsilon \to \infty$</code>. Thus, much like in the EM to TV comparison, if there is to be any difference between these two topologies, it must be the <em>uniformity</em> of the Lipschitz constant that would yield a different topology.</p>
+<p>Similarly, the definition of weak convergence stated that for all <code>$f \in \mathcal{F}_{TV}$</code> we had <code>$\int fd\mu_n \to \int f d\mu$</code>, dropping the uniformity conditon. This leads us to the following definition: a sequence of measures <code>$\mu_n$</code> converges <em>weakly differentially privately</em> (weak-DP) to $\mu$ whenever <code>$\ln \int f d\mu_n \to \ln \int f d\mu$</code> for all <code>$f \in \mathcal{F}_{DP}$</code>. In this section, we prove the following theorem.</p>
+<p class="theorem ">
+    
+When $Y$ is compact, a sequence of mutually absolutely continuous meausures $\mu_n$ weak-DP converges to $\mu$ if and only if $$ \lim_{n \to \infty} \sup_{f \in \mathcal{F}_{DP}^{\mathrm{Lip}}} \left| \ln \int_Y f(y) d\mu_n(y) - \ln \int_Y f(y) d\mu(y) \right| \to 0.$$
+
+</p>
+<div class="proof "></div>
+<p>we can compare the DP and EM topologies. Of course, we know that TV convergence implies WC convergence, and we know that when $Y$ is compact, the EM and WC topologies coincide. Thus, the comparison we underake is in the definition of EM convergence. Specifically, the set of functions <code>$\mathcal{F}_{EM}$</code> differs from the set of functions <code>$\mathcal{F}_{TV}$</code> in that <code>$f : Y \mathbb{R}$</code> is required to be not just continuous but Lipschitz with uniformly bounded Lipschitz constant <code>$\mathrm{Lip}(f) \leq 1$</code>. (Note that the extreme value theorem implies that the boundedness follows from continuity when $Y$ is compact.)</p>
+<p>In the case of the DP topology, the range of our functions $f : Y \to (0, \infty)$ is the <em>positive</em> real numbers, and the natural metric on those is $d_+(x, y) = |\ln(x) - \ln(y)|$. With this metric in hand, we can define $\mathcal{F}^{\mathrm{Lip}}_{DP}$ as the set of all Lipschitz functions $f : Y \to (0, \infty)$ with $\mathrm{Lip}(f) \leq 1$.</p>
+<p>Note that in our proof that convergence in ratio is equivalent to DP convergence, our functions $f_{n\varepsilon}^{\rho}$ were in fact Lipschitz with $\Lip(f_{n\varepsilon}^\rho) \leq \varepsilon$. Of course, in order to get a good enough approximation to $I_{E_n}$, we needed to let $\varepsilon \to \infty$, and so this is why it is not obvious that $\mathcal{F}_{DP}^{\mathrm{Lip}}$ is a large enough set to guarantee convergence in the DP topology.</p>
+<p>However, the reason we needed to let $\varepsilon \to \infty$ was that we needed $\exp(-\varepsilon C') \to 0$ where $C' = \inf_{y \in Y - G_n} d_Y(y, F_n)$.</p>
+<p>What I want to be true:</p>
+<ul>
+<li>Because $Y$ is compact, for any given $\rho$, $C'$ is somehow nicely bounded below, and then $\rho + \exp(\varepsilon C') can be made small.</li>
+</ul>
+<p>Consider the measures $\nu_n$ which are $\mu_n$ on $F_n$ and $0$ elsewhere (normalized). Then these are tight so there exists a closed / compact K &lt;= X such that $\nu_n(X - K) &lt; \varepsilon$ for every $\varepsilon &gt; 0$. Then replace $F_n$ with $F_n \cap K$. So $\nu_n(X - K) = 0$ for all $n$ and $\mu_n(F_n) &gt; 0$</p>
+<p>Since
+What I want is that for any closed subset $F$ we have $mu(F^\rho) &lt; mu(F) + \rho$</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>There are a few possible definitions of <em>randomized function</em>. For instance, you could say that a randomized function $f : X \to Y$ is actually a function $f : X \to \mathcal{P}(Y)$ the space of probability measures on $Y$ (the definition we&rsquo;re using here). You could also think of a randomized function $f : X \to Y$ as a $\operatorname{Hom}(X, Y)$-valued random varaiable, i.e., a map $f : \Omega \to \operatorname{Hom}(X, Y)$. Then composing with the restriction map $\operatorname{Hom}(X, Y) \to \operatorname{Hom}({x}, Y)$ and the canonical isomorphism $\operatorname{Hom}({x}, Y) \cong Y$, you recover a map $X \to \mathcal{P}(Y)$ by pushing forward the measure on $\Omega$.</p>
+<p>Of course, the space $\operatorname{Hom}(X, Y)$ can be quite badly behaved in general, and it is not clear that we want to consider only continuous maps $X \to Y$. (Consider, for instance, the paucity of continuous maps <code>$g: \mathbb{R} \to \{0, 1\}$</code>.) Resolving these technical issues is difficult, and so we instead prefer for this post to consider a <em>randomized function</em> definitionally as a map $f : X \to \mathcal{P}(Y)$.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>There are several other equivalent definitions of weak convergence, which are related by the so-called <a 
+    href="https://en.wikipedia.org/wiki/Convergence_of_measures#Weak_convergence_of_measures"
+    
+    
+     
+      target="_blank" 
+      rel="noopener"
+    
+>
+    portmanteau theorem
+</a>.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>The proof of this fact follows the same basic outline as that of Theorem ???? and uses two key observations: since $Y$ is a metric space, every Borel probability measure is regular; and the function <code>$f(y) = \max\{ 0, 1 - \varepsilon d_Y(y, F) \}$</code> is continuous and bounded.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p>The Wasserstein metrics can be defined even when $Y$ is not compact. However, this definition relies on the fact that the underlying metric on $Y$ is bounded. When $Y$ is compact, this is automatically true.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+    </div>
+
+    
+        <div class="tags">
+            
+                <a href="https://blog.kevinhayeswilson.com/tags/differential-privacy">differential privacy</a>
+            
+        </div>
+    
+    
+    
+
+</section>
+
+
+    </main>
+    
+    <footer id="footer">
+    
+        <div id="social">
+
+
+    <a class="symbol" href="https://github.com/khwilson" target="_blank">
+        
+        <svg fill="#bbbbbb" width="28" height="28"  viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    
+    <title>Github</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Social-Icons---Rounded-Black" transform="translate(-264.000000, -939.000000)">
+            <g id="Github" transform="translate(264.000000, 939.000000)">
+                <path d="M8,72 L64,72 C68.418278,72 72,68.418278 72,64 L72,8 C72,3.581722 68.418278,-8.11624501e-16 64,0 L8,0 C3.581722,8.11624501e-16 -5.41083001e-16,3.581722 0,8 L0,64 C5.41083001e-16,68.418278 3.581722,72 8,72 Z" id="Rounded" fill="#bbbbbb"></path>
+                <path d="M35.9985,13 C22.746,13 12,23.7870921 12,37.096644 C12,47.7406712 18.876,56.7718301 28.4145,59.9584121 C29.6145,60.1797862 30.0525,59.4358488 30.0525,58.7973276 C30.0525,58.2250681 30.0315,56.7100863 30.0195,54.6996482 C23.343,56.1558981 21.9345,51.4693938 21.9345,51.4693938 C20.844,48.6864054 19.2705,47.9454799 19.2705,47.9454799 C17.091,46.4500754 19.4355,46.4801943 19.4355,46.4801943 C21.843,46.6503662 23.1105,48.9634994 23.1105,48.9634994 C25.2525,52.6455377 28.728,51.5823398 30.096,50.9649018 C30.3135,49.4077535 30.9345,48.3460615 31.62,47.7436831 C26.2905,47.1352808 20.688,45.0691228 20.688,35.8361671 C20.688,33.2052792 21.6225,31.0547881 23.1585,29.3696344 C22.911,28.7597262 22.0875,26.3110578 23.3925,22.9934585 C23.3925,22.9934585 25.4085,22.3459017 29.9925,25.4632101 C31.908,24.9285993 33.96,24.6620468 36.0015,24.6515052 C38.04,24.6620468 40.0935,24.9285993 42.0105,25.4632101 C46.5915,22.3459017 48.603,22.9934585 48.603,22.9934585 C49.9125,26.3110578 49.089,28.7597262 48.8415,29.3696344 C50.3805,31.0547881 51.309,33.2052792 51.309,35.8361671 C51.309,45.0917119 45.6975,47.1292571 40.3515,47.7256117 C41.2125,48.4695491 41.9805,49.9393525 41.9805,52.1877301 C41.9805,55.4089489 41.9505,58.0067059 41.9505,58.7973276 C41.9505,59.4418726 42.3825,60.1918338 43.6005,59.9554002 C53.13,56.7627944 60,47.7376593 60,37.096644 C60,23.7870921 49.254,13 35.9985,13" fill="#FFFFFF"></path>
+            </g>
+        </g>
+    </g>
+</svg>
+    </a>
+
+    <a class="symbol" href="https://twitter.com/khayeswilson" target="_blank">
+        
+        <svg fill="#bbbbbb" width="28" height="28" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="438.536px" height="438.536px" viewBox="0 0 438.536 438.536" style="enable-background:new 0 0 438.536 438.536;"
+	 xml:space="preserve">
+<g>
+	<path d="M414.41,24.123C398.333,8.042,378.963,0,356.315,0H82.228C59.58,0,40.21,8.042,24.126,24.123
+		C8.045,40.207,0.003,59.576,0.003,82.225v274.084c0,22.647,8.042,42.018,24.123,58.102c16.084,16.084,35.454,24.126,58.102,24.126
+		h274.084c22.648,0,42.018-8.042,58.095-24.126c16.084-16.084,24.126-35.454,24.126-58.102V82.225
+		C438.532,59.576,430.49,40.204,414.41,24.123z M335.471,168.735c0.191,1.713,0.288,4.278,0.288,7.71
+		c0,15.989-2.334,32.025-6.995,48.104c-4.661,16.087-11.8,31.504-21.416,46.254c-9.606,14.749-21.074,27.791-34.396,39.115
+		c-13.325,11.32-29.311,20.365-47.968,27.117c-18.648,6.762-38.637,10.143-59.953,10.143c-33.116,0-63.76-8.952-91.931-26.836
+		c4.568,0.568,9.329,0.855,14.275,0.855c27.6,0,52.439-8.565,74.519-25.7c-12.941-0.185-24.506-4.179-34.688-11.991
+		c-10.185-7.803-17.273-17.699-21.271-29.691c4.947,0.76,8.658,1.137,11.132,1.137c4.187,0,9.042-0.76,14.56-2.279
+		c-13.894-2.669-25.598-9.562-35.115-20.697c-9.519-11.136-14.277-23.84-14.277-38.114v-0.571
+		c10.085,4.755,19.602,7.229,28.549,7.422c-17.321-11.613-25.981-28.265-25.981-49.963c0-10.66,2.758-20.747,8.278-30.264
+		c15.035,18.464,33.311,33.213,54.816,44.252c21.507,11.038,44.54,17.227,69.092,18.558c-0.95-3.616-1.427-8.186-1.427-13.704
+		c0-16.562,5.853-30.692,17.56-42.399c11.703-11.706,25.837-17.561,42.394-17.561c17.515,0,32.079,6.283,43.688,18.846
+		c13.134-2.474,25.892-7.33,38.26-14.56c-4.757,14.652-13.613,25.788-26.55,33.402c12.368-1.716,23.88-4.95,34.537-9.708
+		C357.458,149.793,347.462,160.166,335.471,168.735z"/>
+</g>
+</svg>
+
+    </a>
+
+
+</div>
+
+    
+
+    <p class="copyright">
+    
+       © Copyright
+       2021
+       <span class="split">
+        <svg fill="#bbbbbb" width="15" height="15" version="1.1" id="heart-15" xmlns="http://www.w3.org/2000/svg" width="15px" height="15px" viewBox="0 0 15 15">
+  <path d="M13.91,6.75c-1.17,2.25-4.3,5.31-6.07,6.94c-0.1903,0.1718-0.4797,0.1718-0.67,0C5.39,12.06,2.26,9,1.09,6.75&#xA;&#x9;C-1.48,1.8,5-1.5,7.5,3.45C10-1.5,16.48,1.8,13.91,6.75z"/>
+</svg>
+       </span>
+       Kevin H. Wilson
+    
+    </p>
+    <p class="powerby">
+        Powered by <a href="http://www.gohugo.io/">Hugo</a> Theme By <a href="https://github.com/nodejh/hugo-theme-cactus-plus">nodejh</a>
+    </p>
+</footer>
+
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  </body>
+</html>
