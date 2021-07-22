@@ -97,7 +97,7 @@ If we mimic the definition of differential privacy, we would consider the indica
 To approximate `$I_{E_n}$`, we will need several positive constants to be choosen later. We will name them `$\varepsilon > 0$`, which will be the constant associated with differential privacy and `$\rho > 0$` which will be a _regularity_ parameter. To begin, recall that every Borel probability measure on a metric space is regular, i.e., if `$\nu$` is a probability measure on a metric space `$(X, d_X)$`, `$E \subseteq X$` is a Borel measureable set, and `$\rho > 0$` is any constant, then there exists some closed set `$F \subseteq E$` and some open set `$G \supseteq E$` such that `$\nu(G - F) < \rho$`. Thus, for each `$n$`, we may choose `$F_n \subseteq E_n \subseteq G_n$` with `$\mu_n(G_n - F_n) < \rho$` and `$\mu(G_n - F_n) < \rho$`.
 
 Now for any `$\varepsilon > 0$`, define the function
-`$$ f(y) = f_{n\varepsilon}^{\rho}(y) = \max\{ \lambda, \exp(-\varepsilon d_Y(y, F_n)) \}. $$`
+`$$ f(y) = f_{n\varepsilon}^{\rho}(y) = \exp(-\varepsilon d_Y(y, F_n)). $$`
 Here for any set $A \subseteq Y$ we define `$d_Y(y, A) = \inf_{y' \in A} d_Y(y, y')$`.
 
 Note that this function is continuous and bounded above by $1$, so $f \in \mathcal{F}_{DP}$. Moreover, it is equal to $1$ precisely on `$F_n$`. Using these facts, we can write
@@ -176,68 +176,3 @@ By the dominated convergence theorem, this last integral converges to $0$ as $n 
 As we saw in the previous section, the DP topology on `$\mathcal{P}(Y)$` is defined by saying that `$\mu_n$` converges to `$\mu$` when we have `$\sup_{f \in \mathcal{F}_{DP}} \left| \ln \int f d\mu_n - \ln \int f d\mu \right| \to 0$`. We noted that a similar definition defines the TV topology, by replacing the set of test functions $\mathcal{F}_{DP}$ with the set of test functions `$\mathcal{F}_{TV}$`. We also saw that the WC topology is defined by dropping the `$\sup$` in the definition above. By analogy, then, we can attempt to define a topology on `$\mathcal{P}(Y)$` by saying a sequence of measures $\mu_n$ converges to $\mu$ whenever for all `$f \in \mathcal{F}_{DP}$` we have `$\left| \ln \int f d\mu_n - \ln \int f d\mu \right| \to 0$`. This turns out to be the same topology as the weak topology.
 
 To see why, recall that by assumption, if $f : Y \to (0, \infty)$ is continuous and bounded, there must be some $c > 0$ such that `$\{ y : f(y) > c \}$` has positive measure or else their union `$\{ y : f(y) > 0 \} = Y$` would have measure $0$. Thus `$\int f d\mu > 0$`. Then to show weak convergence implies convergence in the proposed topology, simply note that for sufficiently large $n$, `$\int fd\mu_n \to \int f d\mu > 0$` implies that `$\int f d\mu_n > 0$`, and since $\ln$ is continuous, `$\ln \int fd\mu_n \to \ln \int f d\mu$`. For the other direction, if $f : Y \to [-1, 1]$ is continuous and bounded, then the function $g(y) = f(y) + 2$ is a continuous, bounded function $g: Y \to (0, \infty)$, and a similar argument utilizing the fact that $\exp$ is continuous finishes the proof.
-
-However, a large part of the motivation behind differential privacy is the requirement that the family of measures given by a randomized function $f : X \to \mathcal{P}(Y)$ is mutually absolutely continuous. This inspires the following definition of the _weak-DP_ topology: A sequence of probability meausres $\mu_n$ is said to convere in the weak-DP topology to a probability measure $\mu$ if it converges in the weak topology _and_ $\mu_n$ and $\mu$ are mutually absolutely continuous for sufficiently large $n$. This topology is of course metrizable: simply take the Prokhorov metric $d_{WC}$ on $\mathcal{P}(Y)$ and say `$$d_{WDP}(\mu, \nu) = \begin{cases} d_{WC}(\mu, \nu) & \mu, \nu \text{ mutually absolutely continuous} \\ \infty & \text{ otherwise.} \end{cases} $$` (Of course, this is not necessarily a _metric_ because it can take on infinite values. So an alternative definition would take `$d'_{WDP}(\mu, \nu) = \min\{ d_{WDP}(\mu, \nu), K \}$` for some any $K > 0$. These "metrics" yield the same topology.)
-
-This metric, however, is.....
-
-
-
-
-Recall that a collection of measures $\mathcal{M} \subseteq \mathcal{P}(Y)$ is _tight_ if for all $\varepsilon > 0$ there exists a compact (hence closed hence measureable) subset $K \subseteq Y$ such that for all $\mu \in \mathcal{M}$ we have that $\mu(K) > 1 - \varepsilon$. A fundamental theorem in the theory of weak convergence is _Prokhorov's Theorem_, which states that a the closure $\Bar{\mathcal{M}}$ in the weak topology on $\mathcal{P}(Y)$ is compact if and only if $\mathcal{M}$ is tight. The weak-DP topology admits a similar characterization.
-
-Say that a collection of measures $\mathcal{M} \subseteq \mathcal{P}(Y)$ is _DP-tight_ if it is tight and $\varepsilon > 0$ there exists a compact (hence closed hence measureable) subset $K \subseteq Y$ such that for all $\mu, \nu \in \mathcal{M}$, $\mu(K) / \nu(K) < \varepsilon$.
-
-{{< thm >}}
-The closure $\Bar{\mathcal{M}}$ of a collection of measures $\mathcal{M} \subseteq \mathcal{P}(Y)$ in the weak-DP topology is compact if and only if $\mathcal{M}$ is DP-tight.
-{{< /thm >}}
-
-{{< proof >}}
-
-{{< /proof >}}
-
-
-
-## Existence of Optimal Couplings
-
-
-
-## DP-Kantorovich Duality
-
-
-### Comparing the DP topology to the EM topology
-
-When $Y$ is compact, we saw above that the distinction between the EM topology and the TV topology was that the set of functions `$\mathcal{F}_{EM} \subseteq \mathcal{F}_{TV}$` was such that `$f \in \mathcal{F}_{EM}$` if and only if it had Lipschitz constant at most $1$. Indeed, we can actually restrict `$\mathcal{F}_{TV}$` to the set of all _Lipschitz_ functions `$f : Y \to \mathbb{R}$` and the resulting topology is still the TV topology. The distinction is entirely in the fact that the functions are Lipschitz with a uniformly bounded constant.
-
-This leads to the natural question: When $Y$ is compact, does the set of functions `$\mathcal{F}_{DP}^{\mathrm{Lip}} \subseteq \mathcal{F}_{DP}$` consisting of functions $f : Y \to (0, \infty)$ which are Lipschitz with $\mathrm{Lip}(f) \leq 1$ yield a different topology on $\mathcal{P}(Y)$ than the DP topology. Here we take the metric on $(0, \infty)$ to be the natural metric $d_+(x, y) = \left| \ln x - \ln y \right|$.
-
-From our proof that convergence in ratio is equivalent to DP convergence, we note that the functions `$f_{n\varepsilon}^{\rho}$` were in fact Lipschitz with `$\mathrm{Lip}(f_{n\varepsilon}^{\rho}) \leq \varepsilon$`. However, in order ot get a good enough approximation to `$I_{E_n}$`, we needed to let `$\varepsilon \to \infty$`. Thus, much like in the EM to TV comparison, if there is to be any difference between these two topologies, it must be the _uniformity_ of the Lipschitz constant that would yield a different topology.
-
-Similarly, the definition of weak convergence stated that for all `$f \in \mathcal{F}_{TV}$` we had `$\int fd\mu_n \to \int f d\mu$`, dropping the uniformity conditon. This leads us to the following definition: a sequence of measures `$\mu_n$` converges _weakly differentially privately_ (weak-DP) to $\mu$ whenever `$\ln \int f d\mu_n \to \ln \int f d\mu$` for all `$f \in \mathcal{F}_{DP}$`. In this section, we prove the following theorem.
-
-{{< thm >}}
-When $Y$ is compact, a sequence of mutually absolutely continuous meausures $\mu_n$ weak-DP converges to $\mu$ if and only if $$ \lim_{n \to \infty} \sup_{f \in \mathcal{F}_{DP}^{\mathrm{Lip}}} \left| \ln \int_Y f(y) d\mu_n(y) - \ln \int_Y f(y) d\mu(y) \right| \to 0.$$
-{{< /thm >}}
-
-{{< proof >}}
-
-{{< /proof >}}
-
-
-we can compare the DP and EM topologies. Of course, we know that TV convergence implies WC convergence, and we know that when $Y$ is compact, the EM and WC topologies coincide. Thus, the comparison we underake is in the definition of EM convergence. Specifically, the set of functions `$\mathcal{F}_{EM}$` differs from the set of functions `$\mathcal{F}_{TV}$` in that `$f : Y \mathbb{R}$` is required to be not just continuous but Lipschitz with uniformly bounded Lipschitz constant `$\mathrm{Lip}(f) \leq 1$`. (Note that the extreme value theorem implies that the boundedness follows from continuity when $Y$ is compact.)
-
-In the case of the DP topology, the range of our functions $f : Y \to (0, \infty)$ is the _positive_ real numbers, and the natural metric on those is $d_+(x, y) = |\ln(x) - \ln(y)|$. With this metric in hand, we can define $\mathcal{F}^{\mathrm{Lip}}_{DP}$ as the set of all Lipschitz functions $f : Y \to (0, \infty)$ with $\mathrm{Lip}(f) \leq 1$.
-
-Note that in our proof that convergence in ratio is equivalent to DP convergence, our functions $f_{n\varepsilon}^{\rho}$ were in fact Lipschitz with $\Lip(f_{n\varepsilon}^\rho) \leq \varepsilon$. Of course, in order to get a good enough approximation to $I_{E_n}$, we needed to let $\varepsilon \to \infty$, and so this is why it is not obvious that $\mathcal{F}_{DP}^{\mathrm{Lip}}$ is a large enough set to guarantee convergence in the DP topology.
-
-However, the reason we needed to let $\varepsilon \to \infty$ was that we needed $\exp(-\varepsilon C') \to 0$ where $C' = \inf_{y \in Y - G_n} d_Y(y, F_n)$.
-
-
-What I want to be true:
-  * Because $Y$ is compact, for any given $\rho$, $C'$ is somehow nicely bounded below, and then $\rho + \exp(\varepsilon C') can be made small.
-
-
-Consider the measures $\nu_n$ which are $\mu_n$ on $F_n$ and $0$ elsewhere (normalized). Then these are tight so there exists a closed / compact K <= X such that $\nu_n(X - K) < \varepsilon$ for every $\varepsilon > 0$. Then replace $F_n$ with $F_n \cap K$. So $\nu_n(X - K) = 0$ for all $n$ and $\mu_n(F_n) > 0$
-
-Since
-What I want is that for any closed subset $F$ we have $mu(F^\rho) < mu(F) + \rho$
